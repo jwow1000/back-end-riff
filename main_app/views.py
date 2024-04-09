@@ -114,6 +114,16 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     queryset = Post.objects.all()
 
+class PostComments(generics.ListCreateAPIView):
+    serializer_class = PostSerializer
+    def get_queryset(self):
+        post_id = self.kwargs['id']
+        return Post.objects.filter(comments = post_id)
+    def perform_create(self, serializer):
+        post_id = self.kwargs['id']
+        post = Post.objects.get(id = post_id)
+        serializer.save(post=post)
+
 #Likes 
 class AddLikeToPost(APIView):
     def post(self, request, post_id, profile_id):
@@ -123,7 +133,7 @@ class AddLikeToPost(APIView):
         return Response({'message': f'{profile.user.username} liked this post.'})
      
 class RemoveLikeFromPost(APIView):
-    def remove (self, request, post_id, profile_id):
+    def delete(self, request, post_id, profile_id):
         post = Post.objects.get(id = post_id)
         profile = Profile.objects.get(id = profile_id)
         post.likes.remove(profile)
@@ -140,11 +150,35 @@ class UserPosts(generics.ListCreateAPIView):
         profile = Profile.objects.get(id = profile_id)
         serializer.save(profile = profile)
 
+#Add a follower
+class AddFollower(generics.ListCreateAPIView):
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]  
+    def get_queryset(self):
+        return Follow.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+#Remove a follower
+class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = FollowSerializer
+    lookup_field = 'id'
+    queryset = Follow.objects.all()
+
+
+#Get all is followed users 
 class FollowsList(generics.ListCreateAPIView):
     serializer_class = FollowSerializer
+    lookup_field = 'profile_id'
+    # queryset = Follow.objects.filter(follower = 2)
     def get_queryset(self):
-        user = self.request.user
-        # find profile based on user
-        # Follow where either the follower or isFollowing id matches profile id
+        profile_id = self.kwargs['profile_id']
+        return Follow.objects.filter(follower = profile_id)
+    def perform_create(self,serializer):
+        profile_id = self.kwargs['profile_id']
+        profile = Profile.objects.get(id = profile_id)
+        serializer.save(profile = profile)
 
+   
     
