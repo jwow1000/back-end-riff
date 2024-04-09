@@ -28,3 +28,14 @@ class Follow(models.Model):
     isFollowing = models.ForeignKey(Profile, related_name='isfollowing_created', on_delete=models.CASCADE)
 
 
+# class Comment(models.Model):
+#     author = models.ForeignKey(Profile, related_name='requests_created', on_delete=models.CASCADE)
+#     title = models.CharField(max_length = 50)
+#     text_body = models.TextField()
+#     comments = models.ForeignKey('self', blank=True, on_delete=models.CASCADE) 
+#     visual = models.TextField()
+#     # likes
+#     likes = models.ManyToManyField(Profile, blank=True, related_name='likes_created')
+
+#     def __str__(self):
+#         return self.title
