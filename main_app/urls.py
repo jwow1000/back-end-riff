@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import Home, PostComments, AddFollower, RemoveFollower, RemoveLikeFromPost, UserPosts, FollowsList, PostDetail, CreateUserView, LoginView, VerifyUserView, PostList, ProfileList, ProfileDetail, AddLikeToPost
 
 urlpatterns = [
@@ -21,4 +23,4 @@ urlpatterns = [
     
     path('posts/<int:post_id>/remove_like/<int:profile_id>/', RemoveLikeFromPost.as_view(), name = 'removeLikeFromPost'),
     path('posts/<int:post_id>/add_like/<int:profile_id>/', AddLikeToPost.as_view(), name = 'addLikeToPost'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
