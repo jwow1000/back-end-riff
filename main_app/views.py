@@ -1,16 +1,15 @@
 from django.http import Http404
-from rest_framework import generics, status, permissions # modify these imports to match
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .models import Post, Profile, Follow, User
-# include the following imports
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.exceptions import PermissionDenied
 from django.contrib.auth import authenticate
-from .serializers import UserSerializer, ProfileSerializer, FollowSerializer, PostSerializer # add the UserSerizlier to the list
+from rest_framework import generics, status, permissions 
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Post, Profile, Follow, User
+from .serializers import UserSerializer, ProfileSerializer, FollowSerializer, PostSerializer 
 
-
-# Create your views here.
+# Home
 class Home(APIView):
     def get(self, request):
         content = {'message': 'Welcome to the Riff api home route!'}
@@ -102,7 +101,8 @@ class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
 #Post create and edit
 class PostList(generics.ListCreateAPIView):
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]  
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)  
     def get_queryset(self):
         return Post.objects.all()
 
@@ -114,6 +114,7 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     queryset = Post.objects.all()
 
+# get all child comments by parent id
 class PostComments(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     def get_queryset(self):
@@ -139,7 +140,7 @@ class RemoveLikeFromPost(APIView):
         post.likes.remove(profile)
         return Response({'message': f'{profile.user.username} unliked this post.'})
 
-#Get all posts by one user
+#Get all posts by one profile
 class UserPosts(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     def get_queryset(self):
@@ -150,7 +151,7 @@ class UserPosts(generics.ListCreateAPIView):
         profile = Profile.objects.get(id = profile_id)
         serializer.save(profile = profile)
 
-#Add a follower
+#Followers
 class AddFollower(generics.ListCreateAPIView):
     serializer_class = FollowSerializer
     permission_classes = [permissions.IsAuthenticated]  
@@ -160,18 +161,16 @@ class AddFollower(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
-#Remove a follower
 class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FollowSerializer
     lookup_field = 'id'
     queryset = Follow.objects.all()
 
-
-#Get all is followed users 
+#Get list of all followed profiles 
 class FollowsList(generics.ListCreateAPIView):
     serializer_class = FollowSerializer
     lookup_field = 'profile_id'
-    # queryset = Follow.objects.filter(follower = 2)
+  
     def get_queryset(self):
         profile_id = self.kwargs['profile_id']
         return Follow.objects.filter(follower = profile_id)
