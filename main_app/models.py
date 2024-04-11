@@ -16,7 +16,7 @@ class Post(MPTTModel):
     author = models.ForeignKey(Profile, related_name='requests_created', on_delete=models.CASCADE)
     title = models.CharField(max_length = 50)
     text_body = models.TextField()
-    comments = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE) 
+    parent = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE) 
     image = models.ImageField(upload_to=upload_to, blank=True, null=True)
     likes = models.ManyToManyField(Profile, blank=True, related_name='likes_created')
     added = models.DateTimeField(auto_now_add=True)
@@ -26,7 +26,8 @@ class Post(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['-added']
-        parent_attr = 'comments'
+        parent_attr = 'parent'
+        
 
 class Follow(models.Model):
     follower = models.ForeignKey(Profile, related_name='follower_created', on_delete=models.CASCADE)
