@@ -119,7 +119,7 @@ class PostComments(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     def get_queryset(self):
         post_id = self.kwargs['id']
-        return Post.objects.filter(comments = post_id)
+        return Post.objects.filter(parent = post_id)
     def perform_create(self, serializer):
         post_id = self.kwargs['id']
         post = Post.objects.get(id = post_id)
