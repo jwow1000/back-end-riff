@@ -26,6 +26,7 @@ class Post(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['-added']
+        parent_attr = 'parent'
         
 
 class Follow(models.Model):

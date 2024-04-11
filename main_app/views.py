@@ -25,6 +25,7 @@ class CreateUserView(generics.CreateAPIView):
         user = User.objects.get(username=response.data['username'])
         refresh = RefreshToken.for_user(user)
 
+        print(request.data.get('profilePic'))
         profile_data = request.data.get('profilePic')
         profile = Profile.objects.create(user=user, profilePic=profile_data)
 
@@ -107,7 +108,8 @@ class PostList(generics.ListCreateAPIView):
         return Post.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        profile = Profile.objects.get(user__id=self.request.user.id)
+        serializer.save(author=profile)
 
 class PostDetail(generics.RetrieveUpdateDestroyAPIView): 
     serializer_class = PostSerializer
