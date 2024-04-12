@@ -35,6 +35,8 @@ class PostSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class FollowSerializer(serializers.ModelSerializer):
+    follower = serializers.PrimaryKeyRelatedField(read_only=True)
+    isFollowing = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Follow
         fields = '__all__'
