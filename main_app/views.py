@@ -168,6 +168,8 @@ class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
     queryset = Follow.objects.all()
 
+
+
 #Get list of all followed profiles 
 class FollowsList(generics.ListCreateAPIView):
     serializer_class = FollowSerializer
@@ -181,5 +183,25 @@ class FollowsList(generics.ListCreateAPIView):
         profile = Profile.objects.get(id = profile_id)
         serializer.save(profile = profile)
 
-   
+class CheckFollowView(APIView):
+    def get(self, request, follower_id, following_id):
+        try:
+            follower = Profile.objects.get(id=follower_id)
+            following = Profile.objects.get(id=following_id)
+        except Profile.DoesNotExist:
+            return Response({"error": "One or both profiles do not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            follow = Follow.objects.get(follower=follower, isFollowing=following)
+            is_following = True
+        except Follow.DoesNotExist:
+            is_following = False
+
+        data = {
+            "follower_id": follower_id,
+            "following_id": following_id,
+            "is_following": is_following
+        }
+
+        return Response(data)  
     
