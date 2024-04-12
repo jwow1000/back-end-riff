@@ -157,11 +157,17 @@ class UserPosts(generics.ListCreateAPIView):
 class AddFollower(generics.ListCreateAPIView):
     serializer_class = FollowSerializer
     permission_classes = [permissions.IsAuthenticated]  
+
     def get_queryset(self):
         return Follow.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        profile = Profile.objects.get(user__id=self.request.user.id)
+        is_following_id = self.request.data.get('isFollowing')
+        serializer.save(follower=profile, isFollowing_id=is_following_id)
+
+
+        
     
 class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = FollowSerializer
