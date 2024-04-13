@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Home, PostComments, AddFollower, RemoveFollower, RemoveLikeFromPost, UserPosts, FollowsList, PostDetail, CreateUserView, LoginView, VerifyUserView, PostList, ProfileList, ProfileDetail, AddLikeToPost, CheckFollowView
+from .views import Home, PostComments, AddFollower, RemoveFollower, RemoveLikeFromPost, UserPosts, FollowsList, PostDetail, CreateUserView, LoginView, VerifyUserView, PostList, ProfileList, ProfileDetail, AddLikeToPost, CheckFollowView, PostsIdFollows
 
 urlpatterns = [
     path('', Home.as_view(), name='home'),
@@ -18,8 +18,9 @@ urlpatterns = [
     path('follows/', AddFollower.as_view(), name='addFollower'),
     path('follows/<int:id>/', RemoveFollower.as_view(), name='removeFollower'),
     path('follows/<int:profile_id>/users/', FollowsList.as_view(), name='followsList'),
+    path('check-follow/<int:follower_id>/<int:following_id>/', CheckFollowView.as_view(), name='check-follow'),
+    path('my-follows/<int:id>', PostsIdFollows.as_view(), name='get-follow-posts'),
     
     path('posts/<int:post_id>/remove_like/<int:profile_id>/', RemoveLikeFromPost.as_view(), name = 'removeLikeFromPost'),
     path('posts/<int:post_id>/add_like/<int:profile_id>/', AddLikeToPost.as_view(), name = 'addLikeToPost'),
-    path('check-follow/<int:follower_id>/<int:following_id>/', CheckFollowView.as_view(), name='check-follow'),
 ]

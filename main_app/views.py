@@ -209,5 +209,22 @@ class CheckFollowView(APIView):
             "is_following": is_following
         }
 
-        return Response(data)  
-    
+        return Response(data) 
+
+class PostsIdFollows(APIView):
+    def followed_profiles_posts(request, profile_id):
+        try:
+            profile = Profile.objects.get(id=profile_id)
+        except Profile.DoesNotExist:
+            return Response({'error': 'Profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get the profiles that the specified profile follows
+        followed_profiles = profile.following.all()
+        print(followed_profiles)
+        # Get posts by the followed profiles
+        followed_posts = Post.objects.filter(author__in=followed_profiles)
+
+        # Serialize the posts
+        serializer = PostSerializer(followed_posts, many=True)
+
+        return Response(serializer.data)
