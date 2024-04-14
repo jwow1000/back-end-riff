@@ -33,4 +33,7 @@ class Follow(models.Model):
     follower = models.ForeignKey(Profile, related_name='follower_created', on_delete=models.CASCADE)
     isFollowing = models.ForeignKey(Profile, related_name='isfollowing_created', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"{self.follower.id} ({self.follower.user.username}) is following {self.isFollowing.id} ({self.isFollowing.user.username})"
+
 

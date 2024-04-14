@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.contrib.auth import authenticate
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, status, permissions 
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
@@ -166,13 +167,27 @@ class AddFollower(generics.ListCreateAPIView):
         is_following_id = self.request.data.get('isFollowing')
         serializer.save(follower=profile, isFollowing_id=is_following_id)
 
+# class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
+#     serializer_class = FollowSerializer
+#     lookup_field = 'id'
+#     queryset = Follow.objects.all()
 
-        
-    
-class RemoveFollower(generics.RetrieveUpdateDestroyAPIView):
+class RemoveFollower(generics.GenericAPIView):
     serializer_class = FollowSerializer
-    lookup_field = 'id'
-    queryset = Follow.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def delete(self, request, id):
+        # Fetch the profile of the logged-in user
+        user_profile = get_object_or_404(Profile, user=request.user)
+
+        # Attempt to retrieve the follow relationship
+        follow = get_object_or_404(Follow, follower=user_profile, isFollowing__id=id)
+
+        # Delete the follow relationship
+        follow.delete()
+
+        # Return a response indicating the follow was deleted
+        return Response({"message": "Follow relationship deleted."}, status=status.HTTP_204_NO_CONTENT)
 
 #Get list of all followed profiles 
 class FollowsList(generics.ListCreateAPIView):
@@ -187,5 +202,31 @@ class FollowsList(generics.ListCreateAPIView):
         profile = Profile.objects.get(id = profile_id)
         serializer.save(profile = profile)
 
-   
+#get all posts by fav users
+# class FavUserPosts(generics.ListCreateAPIView):
+#     serializer_class = PostSerializer
+#     lookup_field = 'profile_id'
+
+#     def get_queryset(self):
+#         profile_id = self.kwargs['profile_id']
+#         favProfs = Follow.objects.filter(follower = profile_id)
+#         return Post.objects.filter(author=favProfs)
+#     def perform_create(self,serializer):
+#         profile_id = self.kwargs['profile_id']
+#         profile = Profile.objects.get(id = profile_id)
+#         serializer.save(profile = profile)
     
+    
+class FavUserPosts(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        # Retrieve the profile ID from the URL
+        profile_id = self.kwargs['profile_id']
+
+        # Get the profiles that are being followed by the profile with the given profile_id
+        # We use 'follower__id' to specify the field in the Follow model we are filtering against
+        followed_profiles = Follow.objects.filter(follower__id=profile_id).values_list('isFollowing__id', flat=True)
+
+        # Fetch posts where the author's profile ID is in the list of followed profiles
+        return Post.objects.filter(author__id__in=followed_profiles)    
