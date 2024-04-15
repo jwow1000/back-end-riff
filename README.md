@@ -1,9 +1,15 @@
+
 # [RIFF]
+
+
+[Backend for the RIFF application]
+
 
 
 ## Table of Contents
 
 - [Project Overview](#project-overview)
+- [Tecknology](#technology)
 - [Features](#features)
 - [Installation](#installation)
 - [Contributing](#contributing)
@@ -17,11 +23,20 @@ Riff serves as a dedicated space for artists to connect, collaborate, and innova
 
 Riff is a platform designed to facilitate collaboration among artists and enable crowd-sourced art creation. With Riff, users can engage in a dynamic creative process, contributing to and enhancing each other's work through threaded comments associated with individual posts.
 
-## Features
+## Technology
 
-- Collaborative Posting: Users can create posts and others artists can contribute, fostering a collaborative environment for artistic expression.
-- Threaded Comments: Each post supports threaded comments, allowing users to provide feedback, suggestions, and additions to specific aspects of the artwork.
-- Version Control: Riff enables users to explore multiple iterations of a piece of art, facilitating iterative refinement and evolution of creative ideas.
+- **Python**: Backend development language.
+- **Django**: Web framework for building APIs and web applications.
+- **Django REST Framework (DRF)**: Toolkit for building Web APIs in Django.
+- **PostgreSQL**: Relational database management system for data storage.
+
+## Features
+- **User Authentication**: Implement secure user authentication and authorization mechanisms.
+- **Artwork Management**: CRUD operations for managing artwork submissions by users.
+- **Feed Generation**: Generate personalized feeds for users based on their favorited users.
+- **Collaborative Posting**: Users can create posts and others artists can contribute, fostering a collaborative environment for artistic expression.
+- **Threaded Comments**: Each post supports threaded comments, allowing users to provide feedback, suggestions, and additions to specific aspects of the artwork.
+- **Version Control**: Riff enables users to explore multiple iterations of a piece of art, facilitating iterative refinement and evolution of creative ideas.
 
 ## Installation
 
@@ -60,8 +75,10 @@ If you want to contribute to this project, please follow these steps:
 
 1. https://django-mptt.readthedocs.io/en/latest/models.html
 
+
 ## Contact
 
  Grace Clower- [Git Hub](https://github.com/geclower) - [LinkedIn](https://www.linkedin.com/in/grace-clower/)
 
 Front-End Project Link: [Riff](https://github.com/jwow1000/front-end-riff)
+
